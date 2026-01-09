@@ -3,12 +3,14 @@ package com.example.apigatewayratelimiter
 import com.example.apigatewayratelimiter.algo.impl.RoundRobinLoadBalancingStrategy
 import com.example.apigatewayratelimiter.algo.impl.TokenBucketRateLimiterStrategy
 import com.example.apigatewayratelimiter.config.LoadBalancerConfig
+import com.example.apigatewayratelimiter.config.RedisConfig
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.web.client.RestTemplate
 
 class LoadBalancerConfigTest {
     private val config = LoadBalancerConfig()
+    private val redisConfig = RedisConfig()
 
     @Test
     fun `should create RestTemplate bean`() {
@@ -24,7 +26,7 @@ class LoadBalancerConfigTest {
     fun `should create LoadBalancer with three servers`() {
         // Given
         val loadBalancingStrategy = RoundRobinLoadBalancingStrategy()
-        val rateLimiter = TokenBucketRateLimiterStrategy()
+        val rateLimiter = TokenBucketRateLimiterStrategy(redisConfig.redisTemplate())
 
         // When
         val loadBalancer = config.loadBalancer(loadBalancingStrategy, rateLimiter)
@@ -42,7 +44,7 @@ class LoadBalancerConfigTest {
     fun `should configure servers with correct IDs`() {
         // Given
         val loadBalancingStrategy = RoundRobinLoadBalancingStrategy()
-        val rateLimiter = TokenBucketRateLimiterStrategy()
+        val rateLimiter = TokenBucketRateLimiterStrategy(redisConfig.redisTemplate())
 
         // When
         val loadBalancer = config.loadBalancer(loadBalancingStrategy, rateLimiter)
