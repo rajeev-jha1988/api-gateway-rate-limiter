@@ -72,6 +72,11 @@ class HashRing(
                 reassignCount++
             }
         }
+      /*
+        val serverFrom = ring.higherKey(hVal)?: ring.firstKey()
+        migrateData(from = serverFrom, to= serverId, targetHas = hVal) // now we will find the lower key
+        // and this will be higheykey and migrate all the data form server to server*/
+
         return reassignCount
     }
 
@@ -86,8 +91,7 @@ class HashRing(
         serverLocs.remove(serverId)
 
         var reassignCount = 0
-        // Re-evaluate all keys to see if they need reassignment
-
+        // Re-evaluate all keys to see if they need reassignment which assiged to server
         for ((kName, keyHash) in keyToHash) {
             if (keyToAssignedServer[kName] == serverId) {
                 val (newSrv, _) = getTargetServer(keyHash)
@@ -101,9 +105,9 @@ class HashRing(
 
     fun assignKey(
         keyName: String,
-        keyHashKey: Int,
+        extraHashKey: Int,
     ): Int {
-        val keyHash = hashingStrategy.calculate(keyName, keyHashKey)
+        val keyHash = hashingStrategy.calculate(keyName, extraHashKey)
         keyToHash[keyName] = keyHash
 
         val (serverId, serverHash) = getTargetServer(keyHash)
@@ -116,6 +120,28 @@ class HashRing(
         val targetedHash = ring.ceilingKey(hash) ?: ring.firstKey()
         val servername = ring[targetedHash]!!.last() // as on ring for given hash we take last added server
         return Pair(servername, targetedHash)
+    }
+
+    /**
+     * GET Operation: Locates the physical server responsible for a key.
+     *
+     * @param keyName The name of the record to find.
+     * @param hashKey The value used for the hash function.
+     * @return The ID of the server where this key's data is stored.
+     */
+    fun get(
+        keyName: String,
+        hashKey: Int,
+    ): String {
+        val keyDegree = hashingStrategy.calculate(keyName, hashKey)
+
+        // Use the same clockwise logic: find first server degree >= keyDegree
+        val targetDegree =
+            ring.ceilingKey(keyDegree) ?: ring.firstKey()
+                ?: throw IllegalStateException("No servers available in the ring.")
+
+        // Rule: If multiple servers share a degree, return the latest added (last in list)
+        return ring[targetDegree]!!.last()
     }
 }
 
