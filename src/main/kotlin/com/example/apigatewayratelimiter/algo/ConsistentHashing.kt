@@ -54,8 +54,8 @@ class HashRing(
     private val keyToHash = mutableMapOf<String, Int>()
 
     fun addServer(
-        serverId: String,
-        hashKey: Int,
+        serverId: String, // name of server
+        hashKey: Int, // aditional hash key
     ): Int {
         val hVal = hashingStrategy.calculate(serverId, hashKey)
         serverLocs[serverId] = hVal
@@ -114,8 +114,8 @@ class HashRing(
 
     fun getTargetServer(hash: Int): Pair<String, Int> {
         val targetedHash = ring.ceilingKey(hash) ?: ring.firstKey()
-        val name = ring[targetedHash]!!.last() // as on ring for given hash we take last added server
-        return Pair(name, targetedHash)
+        val servername = ring[targetedHash]!!.last() // as on ring for given hash we take last added server
+        return Pair(servername, targetedHash)
     }
 }
 
