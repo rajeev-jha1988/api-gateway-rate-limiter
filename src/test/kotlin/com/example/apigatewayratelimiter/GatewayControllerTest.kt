@@ -2,7 +2,10 @@ package com.example.apigatewayratelimiter
 
 import com.example.apigatewayratelimiter.loadbalancer.LoadBalancer
 import com.example.apigatewayratelimiter.resources.GatewayController
-import io.mockk.*
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import jakarta.servlet.http.HttpServletRequest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals

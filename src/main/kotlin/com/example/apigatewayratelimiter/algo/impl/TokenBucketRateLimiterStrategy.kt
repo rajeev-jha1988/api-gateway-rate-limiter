@@ -5,15 +5,14 @@ import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.core.script.DefaultRedisScript
 import org.springframework.stereotype.Service
 import java.time.Instant
-import java.util.concurrent.TimeUnit
 import kotlin.toString
 
 @Service
 class TokenBucketRateLimiterStrategy(
-    private val redisTemplate: RedisTemplate<String, String>
+    private val redisTemplate: RedisTemplate<String, String>,
 ) : RateLimiterStrategy {
-
-    private val script = """
+    private val script =
+        """
         local bucket = redis.call('HMGET', KEYS[1], 'tokens', 'last_refill')
         local max_tokens = tonumber(ARGV[1])
         local refill_rate = tonumber(ARGV[2])
@@ -41,17 +40,17 @@ class TokenBucketRateLimiterStrategy(
         redis.call('HSET', KEYS[1], 'tokens', tokens, 'last_refill', last_refill)
         redis.call('EXPIRE', KEYS[1], 86400) -- Expire after 24 hours of inactivity
         return allowed
-    """.trimIndent()
+        """.trimIndent()
 
     // Change Int to Long for better compatibility with Redis responses
-    private val redisScript = DefaultRedisScript<String>(script).apply {
-        setResultType(String::class.java)
-    }
+    private val redisScript =
+        DefaultRedisScript<String>(script).apply {
+            setResultType(String::class.java)
+        }
 
     private val maxTokens = 100
     private val refillRate = 100 // tokens per window
     private val windowSize = 60 // seconds
-
 
     override fun isAllowed(clientId: String): Boolean {
        /* // Implement token bucket algorithm logic here
@@ -72,17 +71,17 @@ class TokenBucketRateLimiterStrategy(
         clientData.tokens -= 1
         return true*/
 
-
         val key = "token_bucket:$clientId"
         val now = Instant.now().epochSecond
-        val result = redisTemplate.execute(
-            redisScript,
-            listOf(key),
-            maxTokens.toString(),
-            refillRate.toString(),
-            windowSize.toString(),
-            now.toString()
-        )
+        val result =
+            redisTemplate.execute(
+                redisScript,
+                listOf(key),
+                maxTokens.toString(),
+                refillRate.toString(),
+                windowSize.toString(),
+                now.toString(),
+            )
 
 // Use safe call ?. and comparison to handle potential nulls
         return result == "1"

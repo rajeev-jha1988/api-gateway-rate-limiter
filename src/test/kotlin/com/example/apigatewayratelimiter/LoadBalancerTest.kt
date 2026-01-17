@@ -4,13 +4,20 @@ import com.example.apigatewayratelimiter.algo.LoadBalancingStrategy
 import com.example.apigatewayratelimiter.algo.RateLimiterStrategy
 import com.example.apigatewayratelimiter.loadbalancer.LoadBalancer
 import com.example.apigatewayratelimiter.loadbalancer.Server
-import io.mockk.*
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.http.*
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.client.RestTemplate
+import kotlin.test.assertEquals
 
 class LoadBalancerTest {
     private lateinit var loadBalancer: LoadBalancer

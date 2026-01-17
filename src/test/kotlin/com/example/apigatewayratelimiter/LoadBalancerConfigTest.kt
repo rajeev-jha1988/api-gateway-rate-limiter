@@ -4,7 +4,9 @@ import com.example.apigatewayratelimiter.algo.impl.RoundRobinLoadBalancingStrate
 import com.example.apigatewayratelimiter.algo.impl.TokenBucketRateLimiterStrategy
 import com.example.apigatewayratelimiter.config.LoadBalancerConfig
 import com.example.apigatewayratelimiter.config.RedisConfig
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.web.client.RestTemplate
 

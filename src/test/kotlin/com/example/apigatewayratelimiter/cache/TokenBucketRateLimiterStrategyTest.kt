@@ -2,13 +2,13 @@ package com.example.apigatewayratelimiter.cache
 
 import com.example.apigatewayratelimiter.algo.impl.TokenBucketRateLimiterStrategy
 import com.example.apigatewayratelimiter.config.RedisConfig
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.data.redis.core.RedisTemplate
 
 class TokenBucketRateLimiterStrategyTest {
-
     private lateinit var redisTemplate: RedisTemplate<String, String>
     private lateinit var rateLimiter: TokenBucketRateLimiterStrategy
 

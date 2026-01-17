@@ -15,7 +15,7 @@ class LoadBalancer(
     val servers: List<Server>,
     @Qualifier("roundRobinLoadBalancingStrategy")
     val loadBalancingStrategy: LoadBalancingStrategy,
-    @Qualifier( value = "tokenBucketRateLimiterStrategy")
+    @Qualifier(value = "tokenBucketRateLimiterStrategy")
     val rateLimiter: RateLimiterStrategy,
     val restTemplate: RestTemplate,
 ) {
